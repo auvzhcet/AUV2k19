@@ -1,7 +1,7 @@
 import pigpio
 import time
 from Input import InputThread
-
+import VideoRecord as vr 
 
 pin_f = 11
 pin_b = 12
@@ -65,6 +65,7 @@ def motion(key):
     elif key == 'q':
         print("Quit")
         hold(thruster_pins)
+        vr.destroy()
         exit()
 
     elif key == 'h':
@@ -91,6 +92,7 @@ def main():
     it = InputThread()
     it.start()
     while True: 
+        vr.capture()
         key = it.get_user_input()
         time.sleep(0.01)
         if key != None:
