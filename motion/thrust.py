@@ -11,8 +11,8 @@ pin_l = 15
 
 thruster_pins = [pin_f, pin_b, pin_r, pin_l]
 
-width_ = 1600
-width_ = 1400
+width_h = 1600
+width_l = 1400
 thrust = 0
 
 pi = pigpio.pi()
@@ -97,6 +97,7 @@ def main():
             motion(key)
             it = InputThread()
             it.start()
+        
 
 if __name__ == '__main__':
     main()
