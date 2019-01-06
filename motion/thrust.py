@@ -1,3 +1,5 @@
+import curses
+from curses import wrapper
 import pigpio
 import time
 from Input import InputThread
@@ -66,6 +68,7 @@ def motion(key):
         print("Quit")
         hold(thruster_pins)
         vr.destroy()
+        time.sleep(1)
         exit()
 
     elif key == 'h':
@@ -82,24 +85,41 @@ def motion(key):
             thrust -= 10
         print('Decreased Thrust To:', thrust)
 
+    elif key == 'm':    
+        print("Tilt front")
+        pi.set_servo_pulsewidth(pin_f,width_l - thrust)
+        pi.set_servo_pulsewidth(pin_b, width_h + thrust)
+
+    elif key == 'n':    
+        print("Tilt backward")
+        pi.set_servo_pulsewidth(pin_b,width_l - thrust)
+        pi.set_servo_pulsewidth(pin_f, width_h + thrust)
+
     else:
         print('None')
         hold(thruster_pins)
 
+def main(stdscr):
+        global thrust, thruster_pins
+        print('In the main loop.')
+        stdscr.nodelay(True)
+        stdscr.clear()
 
-def main():
-    print('In the main loop.')
-    it = InputThread()
-    it.start()
-    while True: 
-        vr.capture()
-        key = it.get_user_input()
-        time.sleep(0.01)
-        if key != None:
-            motion(key)
-            it = InputThread()
-            it.start()
-        
+        while True:
+            vr.capture()
+            c = stdscr.getch()
+            curses.flushinp()
 
-if __name__ == '__main__':
-    main()
+            if c == -1:
+                stdscr.clear()
+                stdscr.addstr('Thrust is ' + str(thrust) + '\n')
+                hold(thruster_pins)
+
+            else:
+                stdscr.clear()
+                stdscr.addstr('Pressed ' + chr(c) + '\n')
+                motion(chr(c))
+
+            time.sleep(0.06)
+
+curses.wrapper(main)
