@@ -4,6 +4,7 @@ import pigpio
 import time
 from Input import InputThread
 import VideoRecord as vr 
+import IMU
 
 pin_f = 11
 pin_b = 12
@@ -29,6 +30,17 @@ time.sleep(1)
 def hold(pins):
     for pin in pins:
         pi.set_servo_pulsewidth(pin,1500)
+
+def pitch_control(x_rot):
+    max_thrust = 300
+    thrust_per_degree = max_thrust/90
+    rot_thrust = x_rot*thrust_per_degree
+    
+    if rot_thrust >= 200:
+        rot_thrust = 200
+
+    pi.set_servo_pulsewidth(pin_f, 1500 + rot_thrust)
+    pi.set_servo_pulsewidth(pin_b, 1500 - rot_thrust)
 
 
 def motion(key):
@@ -94,6 +106,12 @@ def motion(key):
         print("Tilt backward")
         pi.set_servo_pulsewidth(pin_b,width_l - thrust)
         pi.set_servo_pulsewidth(pin_f, width_h + thrust)
+
+    elif key == 'p':
+        print('P-controlled pitch')
+        x_rot, y_rot = IMU.get_rotations()
+        pitch_control(x_rot)
+
 
     else:
         print('None')
