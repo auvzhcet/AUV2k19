@@ -32,12 +32,13 @@ def hold(pins):
         pi.set_servo_pulsewidth(pin,1500)
 
 def pitch_control(x_rot):
-    max_thrust = 300
+    max_thrust = 400
     thrust_per_degree = max_thrust/90
     rot_thrust = x_rot*thrust_per_degree
-    
+    print('x_rot = ', x_rot)
     if rot_thrust >= 200:
         rot_thrust = 200
+    print('rot_thrust = ', rot_thrust)
 
     pi.set_servo_pulsewidth(pin_f, 1500 + rot_thrust)
     pi.set_servo_pulsewidth(pin_b, 1500 - rot_thrust)
