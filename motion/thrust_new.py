@@ -124,7 +124,7 @@ def height_control():
 
     
 def motion(key):
-    global thrust, thruster_pins
+    global thrust, thruster_pins, man_under_thrust
 
     if key == 'w':
         print("Move forward")
@@ -193,6 +193,14 @@ def motion(key):
     elif key == 'l':
         height_control()
 
+    elif key == '9':
+        man_under_thrust -= 10
+        print('Decrease man_under thrust: ', man_under_thrust)
+
+    elif key == '0':
+        man_under_thrust += 10
+        print('Increase man_under thrust: ', man_under_thrust)
+
 
     else:
         print('None')
@@ -219,6 +227,6 @@ def main(stdscr):
                 stdscr.addstr('Pressed ' + chr(c) + '\n')
                 motion(chr(c))
 
-            time.sleep(0.1)
+            time.sleep(0.06)
 
 curses.wrapper(main)
