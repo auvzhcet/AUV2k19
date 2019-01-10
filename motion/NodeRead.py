@@ -1,0 +1,57 @@
+import serial
+import time
+import os
+
+class NodeRead:
+
+    def __init__(self):
+        self.baud_rate = 9600
+        self.node_port = '/dev/ttyUSB0'
+        self.node_serial = None
+
+    def make_connection(self):
+        while(True):
+            try:
+                self.node_serial = serial.Serial(port = self.node_port, baudrate=self.baud_rate)
+                self.node_serial.timeout = 2
+                #print("Connection Successful")
+                break
+            except:
+                print("Unable to find port")
+
+    def read_serial_data(self):
+        self.make_connection()
+        if(self.node_serial.is_open):
+            #print("Port active")
+            while(True):
+                try:
+                    size = self.node_serial.inWaiting()
+                    #print(size)
+                except:
+                    print("No connection")
+                    self.make_connection()
+                if(size):
+                    # print("Receiving data")
+                    try:
+                        data = self.node_serial.read(size)
+                        print(data)
+                        data = int(data)
+                        #print(data)
+                    except:
+                        print("Read Error")
+                    return data
+
+        else:
+            return None
+            print("Node Closed")
+
+
+def main():
+    serial = NodeRead()
+    while(True):
+        data = serial.read_serial_data()
+        os.system('clear')
+        print(data)
+
+if __name__ == '__main__':
+    main()

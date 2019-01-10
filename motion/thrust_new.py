@@ -4,7 +4,8 @@ import pigpio
 import time
 from Input import InputThread
 import VideoRecord as vr 
-# import IMU
+import IMU
+from NodeRead import NodeRead
 
 pin_f = 11
 pin_b = 12
@@ -24,6 +25,7 @@ for pin in thruster_pins:
     pi.set_servo_pulsewidth(pin,1500)
 
 button_delay = 0.01
+nodeRead = NodeRead()
 
 time.sleep(1)
 
@@ -42,6 +44,41 @@ def pitch_control(x_rot):
 
     pi.set_servo_pulsewidth(pin_f, 1500 + rot_thrust)
     pi.set_servo_pulsewidth(pin_b, 1500 - rot_thrust)
+
+
+def get_rot_thrust(x_rot):
+    max_thrust = 400
+    thrust_per_degree = max_thrust/90
+    rot_thrust = x_rot*thrust_per_degree
+    if rot_thrust >= 200:
+        rot_thrust = 200
+    return rot_thrust
+
+
+def height_control(x_rot, p):
+    offset = 440
+    p_UW = p - offset
+    max_thrust = 400
+    desired_depth = 33
+    thrust_per_unit = max_thrust/desired_depth
+    print('pressure: ', p)
+    under_thrust = (desired_depth - p_UW)*thrust_per_unit
+    
+    if under_thrust >= 200:
+        under_thrust = 200
+    print('under_thrust = ', under_thrust)
+
+    rot_thrust = get_rot_thrust(x_rot)
+    if rot_thrust >= 100:
+        rot_thrust = 100
+    print('rot_thrust  = ', rot_thrust)
+    forward_thrust = int(1500 - under_thrust + rot_thrust)
+    backward_thrust = int(1500 - under_thrust - rot_thrust)
+    print(forward_thrust, backward_thrust)
+
+    # pi.set_servo_pulsewidth(pin_f, forward_thrust)
+    # pi.set_servo_pulsewidth(pin_b, backward_thrust)
+
 
 
 def motion(key):
@@ -110,8 +147,16 @@ def motion(key):
 
     elif key == 'p':
         print('P-controlled pitch')
-        # x_rot, y_rot = IMU.get_rotations()
-        # pitch_control(x_rot)
+        x_rot, y_rot = IMU.get_rotations()
+        pitch_control(x_rot)
+
+    elif key == 'l':
+        print('Height/Pitch Control')
+        x_rot, y_rot = IMU.get_rotations()
+        p = nodeRead.read_serial_data()
+        print('Pressure String: ', p)
+        p = int(p)
+        height_control(x_rot, p)
 
 
     else:
@@ -139,6 +184,6 @@ def main(stdscr):
                 stdscr.addstr('Pressed ' + chr(c) + '\n')
                 motion(chr(c))
 
-            time.sleep(0.06)
+            time.sleep(0.1)
 
 curses.wrapper(main)
