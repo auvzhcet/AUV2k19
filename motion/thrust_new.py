@@ -18,6 +18,7 @@ thruster_pins = [pin_f, pin_b, pin_r, pin_l]
 width_h = 1600
 width_l = 1400
 thrust = 0
+man_under_thrust = 150
 
 pi = pigpio.pi()
 print("Initialisation. Setting pulse width to 1500")
@@ -33,13 +34,18 @@ def hold(pins):
     for pin in pins:
         pi.set_servo_pulsewidth(pin,1500)
 
-def pitch_control(x_rot):
+def pitch_control():
+    print('P-controlled pitch')
+    x_rot, y_rot = IMU.get_rotations()
+
     max_thrust = 400
     thrust_per_degree = max_thrust/90
     rot_thrust = x_rot*thrust_per_degree
     print('x_rot = ', x_rot)
     if rot_thrust >= 200:
         rot_thrust = 200
+    if rot_thrust <= -200:
+        rot_thrust = -200
     print('rot_thrust = ', rot_thrust)
 
     pi.set_servo_pulsewidth(pin_f, 1500 + rot_thrust)
@@ -52,35 +58,71 @@ def get_rot_thrust(x_rot):
     rot_thrust = x_rot*thrust_per_degree
     if rot_thrust >= 200:
         rot_thrust = 200
+
+    if rot_thrust <= -200:
+        rot_thrust = -200
+
     return rot_thrust
 
 
-def height_control(x_rot, p):
-    offset = 440
-    p_UW = p - offset
-    max_thrust = 400
-    desired_depth = 33
-    thrust_per_unit = max_thrust/desired_depth
-    print('pressure: ', p)
-    under_thrust = (desired_depth - p_UW)*thrust_per_unit
+def height_control():
+    global man_under_thrust
+    try:
+        print('Height/Pitch Control')
+        x_rot, y_rot = IMU.get_rotations()
+        p = nodeRead.read_serial_data()
+        print('Pressure String: ', p)
+        p = int(p)
+
+        offset = 440
+        p_UW = p - offset
+        max_thrust = 400
+        desired_depth = 33
+        thrust_per_unit = max_thrust/desired_depth
+        print('pressure: ', p)
+        under_thrust = (desired_depth - p_UW)*thrust_per_unit
+        
+        if under_thrust >= 200:
+            under_thrust = 200
+        print('under_thrust = ', under_thrust)
+
+        rot_thrust = get_rot_thrust(x_rot)
+        if rot_thrust >= 100:
+            rot_thrust = 100
+        if rot_thrust <= -100:
+            rot_thrust = -100
+        
+        print('rot_thrust  = ', rot_thrust)
+        forward_thrust = int(1500 - under_thrust + rot_thrust)
+        backward_thrust = int(1500 - under_thrust - rot_thrust)
+        print(forward_thrust, backward_thrust)
+
+        pi.set_servo_pulsewidth(pin_f, forward_thrust)
+        pi.set_servo_pulsewidth(pin_b, backward_thrust)
     
-    if under_thrust >= 200:
-        under_thrust = 200
-    print('under_thrust = ', under_thrust)
+    except:
+        print('Exception')
+        x_rot, y_rot = IMU.get_rotations()
+        
+        under_thrust = man_under_thrust
+        print('under_thrust :', under_thrust)
 
-    rot_thrust = get_rot_thrust(x_rot)
-    if rot_thrust >= 100:
-        rot_thrust = 100
-    print('rot_thrust  = ', rot_thrust)
-    forward_thrust = int(1500 - under_thrust + rot_thrust)
-    backward_thrust = int(1500 - under_thrust - rot_thrust)
-    print(forward_thrust, backward_thrust)
+        rot_thrust = get_rot_thrust(x_rot)
+        if rot_thrust >= 100:
+            rot_thrust = 100
+        if rot_thrust <= -100:
+            rot_thrust = -100
+        
+        print('rot_thrust  = ', rot_thrust)
+        forward_thrust = int(1500 - under_thrust + rot_thrust)
+        backward_thrust = int(1500 - under_thrust - rot_thrust)
+        print(forward_thrust, backward_thrust)
 
-    # pi.set_servo_pulsewidth(pin_f, forward_thrust)
-    # pi.set_servo_pulsewidth(pin_b, backward_thrust)
+        pi.set_servo_pulsewidth(pin_f, forward_thrust)
+        pi.set_servo_pulsewidth(pin_b, backward_thrust)
+            
 
-
-
+    
 def motion(key):
     global thrust, thruster_pins
 
@@ -146,17 +188,10 @@ def motion(key):
         pi.set_servo_pulsewidth(pin_f, width_h + thrust)
 
     elif key == 'p':
-        print('P-controlled pitch')
-        x_rot, y_rot = IMU.get_rotations()
-        pitch_control(x_rot)
+        pitch_control()
 
     elif key == 'l':
-        print('Height/Pitch Control')
-        x_rot, y_rot = IMU.get_rotations()
-        p = nodeRead.read_serial_data()
-        print('Pressure String: ', p)
-        p = int(p)
-        height_control(x_rot, p)
+        height_control()
 
 
     else:
