@@ -3,34 +3,28 @@ import movement
 import time
 
 m = movement.Movement()
-
+thrust = 100
 
 def motion(key):
-    # TODO: When the movement class supports thrust as attribute, then
-    #       extend the +/- functionality.
+    global thrust
+
     if key == 'w':
-        print("Move forward")
-        m.forward(100)
+        m.forward(thrust)
 
     elif key == 's':
-        print("Move backward")
-        m.backward(100)
+        m.backward(thrust)
 
     elif key == 'a':
-        print("Turn left")
-        m.left(100)
+        m.left(thrust)
 
     elif key == 'd':
-        print("Turn right")
-        m.right(100)
+        m.right(thrust)
 
     elif key == 'i':
-        print("Move underwater")
-        m.up(100)
+        m.up(thrust)
 
     elif key == 'o':
-        print("Move upwards")
-        m.down(100)
+        m.down(thrust)
 
     elif key == 'q':
         print("Quit")
@@ -39,22 +33,29 @@ def motion(key):
         exit()
 
     elif key == 'h':
-        print('Hold')
         m.hold()
 
     elif key == 'm':
-        print("Tilt front")
-        m.tilt(100)
+        m.tilt_forward(thrust)
 
     elif key == 'n':
-        print("Tilt backward")
-        m.tilt_backward(100)
+        m.tilt_backward(thrust)
 
     elif key == 'p':
-        m.stabilize_pitch()
+        m.pitch_control()
 
     elif key == 'l':
-        m.stabilized_hp()
+        m.hp_control()
+
+    elif key == '+':
+        thrust += 10
+        if thrust >= 200:
+            thrust = 200
+    
+    elif key == '-':
+        thrust -= 10
+        if thrust <= 0:
+            thrust = 0
 
     else:
         print('None')
@@ -67,6 +68,7 @@ def main(stdscr):
         stdscr.clear()
 
         while True:
+            stdscr.addstr('Thrust = ' + str(thrust) + '\n')
             c = stdscr.getch()
             curses.flushinp()
             if c == -1:
