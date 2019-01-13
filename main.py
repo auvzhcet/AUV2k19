@@ -1,6 +1,7 @@
 import curses
-import movement
+from motion import movement
 import time
+from vision import VideoRecord as vr
 
 m = movement.Movement()
 thrust = 100
@@ -29,6 +30,7 @@ def motion(key):
     elif key == 'q':
         print("Quit")
         m.hold()
+        vr.destroy()
         time.sleep(1)
         exit()
 
@@ -68,6 +70,7 @@ def main(stdscr):
         stdscr.clear()
 
         while True:
+            vr.capture()
             stdscr.addstr('Thrust = ' + str(thrust) + '\n')
             c = stdscr.getch()
             curses.flushinp()

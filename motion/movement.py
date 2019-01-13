@@ -1,13 +1,12 @@
-
 import time
 
 try:
-    import IMU
+    from sensors import IMU
 except:
-    print('IMU not found')
+    print('IMU Import Error')
 
 try:
-    from NodeRead import NodeRead
+    from sensors.NodeRead import NodeRead
 except:
     print('Node MCU Error')
 
