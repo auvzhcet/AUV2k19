@@ -2,13 +2,9 @@ import time
 
 try:
     from sensors import IMU
-except:
-    print('IMU Import Error')
-
-try:
     from sensors.NodeRead import NodeRead
-except:
-    print('Node MCU Error')
+except Exception as e:
+    print(e.__doc__)
 
 import pigpio
 
@@ -19,7 +15,8 @@ class Movement:
         self.pi = pigpio.pi()
         try:
             self.noderead = NodeRead()
-        except:
+        except Exception as e:
+            print(e.__doc__)
             print('Undable to initialise Node MCU read script')
 
         self.pin_f = 11
@@ -88,7 +85,8 @@ class Movement:
             rot_thrust = x_rot*thrust_per_degree
             print('x_rot = ', x_rot)
         
-        except:
+        except Exception as e:
+            print(e.__doc__)
             print('IMU Error')
             rot_thrust = 0
 
@@ -121,9 +119,9 @@ class Movement:
             thrust_per_unit = max_thrust/desired_depth
             print('pressure: ', p)
             under_thrust = (desired_depth - p_UW)*thrust_per_unit
-
-        except:
-            print('Pressure Sensor Error')
+        except Exception as e:
+            print(e.__doc__)
+            print("Pressure sensing error")
             under_thrust = 150
 
         return under_thrust
