@@ -10,14 +10,9 @@ class NodeRead:
         self.node_serial = None
 
     def make_connection(self):
-        while(True):
-            try:
-                self.node_serial = serial.Serial(port = self.node_port, baudrate=self.baud_rate)
-                self.node_serial.timeout = 2
-                #print("Connection Successful")
-                break
-            except:
-                print("Unable to find port")
+        self.node_serial = serial.Serial(port = self.node_port, baudrate=self.baud_rate)
+        self.node_serial.timeout = 2
+                
 
     def read_serial_data(self):
         self.make_connection()
@@ -34,10 +29,12 @@ class NodeRead:
                     # print("Receiving data")
                     try:
                         data = self.node_serial.read(size)
+                        print(data)
+                        data = int(data)
                         #print(data)
                     except:
-                        print("No Connection")
-                    return data.decode('ascii')
+                        print("Read Error")
+                    return data
 
         else:
             return None
