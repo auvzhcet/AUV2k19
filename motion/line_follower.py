@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 import cv2
 import numpy
-import pigpio
+from motion import movement
 
-# cap = cv2.VideoCapture('plank_video.mp4')
-cap = cv2.VideoCapture(1)
-
-pi = pigpio.pi()
-
+cap = cv2.VideoCapture(0)
+m = movement.Movement()
 
 def mask_image(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
@@ -37,32 +34,44 @@ def correct_error(cx, cy, image):
     h, w, d = image.shape
     # NOTE: If it doesn't seems to work, try changing to cy to cx
     err = cx - w/2
-    print("[DEBUG] ERR: ", err)
     # NOTE: If the motion is too erratic, then consider a median range
     #      where there shall be no lateral movement
 
     # TODO: Propel linearly
     linear_thrust = 1600
-    slope = 5/8
-
-    if err < 0:
-        # Move the robot left
-        print("Move Left")
-        thrust_new = -1*err*slope + linear_thrust
-        pi.set_servo_pulsewidth(23, thrust_new)
-        pi.set_servo_pulsewidth(15, linear_thrust)
-
+    slope = 5/16
+    rot_thrust = err*slope
+    
+    rot_thrust = max(-100, min(rot_thrust, 100))
+    if rot_thrust >= 0:
+        print('Left')
     else:
-        # Move the robot right
-        print("Move Right")
-        thrust_new = err*slope + linear_thrust
-        pi.set_servo_pulsewidth(15, thrust_new)
-        pi.set_servo_pulsewidth(23, linear_thrust)
+        print('Right')
+
+    print('rot_thrust = ', rot_thrust)
+    thrusts = {
+        m.pin_l: linear_thrust - rot_thrust,
+        m.pin_r: linear_thrust + rot_thrust
+    }
+    m.custom_thrusts(thrusts)
+
+
+def run():
+    # NOTE: To avoid randomly occuring ZeroDivisionError and variable not
+    #       initialized error, wrap the whole thing in try/escape.
+    rec, image = cap.read()
+    # image = cv2.imread("plank_video_new.jpeg")
+    mask = mask_image(image)
+    cx, cy = centroid_from_mask(image, mask)
+    correct_error(cx, cy, image)
+
+    # cv2.imshow("window", image)
+    # key = cv2.waitKey(20)
+    # if key & 0xFF == ord('q'):
+    #     break
 
 
 def main():
-    # NOTE: To avoid randomly occuring ZeroDivisionError and variable not
-    #       initialized error, wrap the whole thing in try/escape.
     while True:
         rec, image = cap.read()
         # image = cv2.imread("plank_video_new.jpeg")
@@ -71,8 +80,9 @@ def main():
         correct_error(cx, cy, image)
 
         # cv2.imshow("window", image)
-        # cv2.waitKey(25)
-
+        # key = cv2.waitKey(20)
+        # if key & 0xFF == ord('q'):
+        #     break
 
 if __name__ == '__main__':
     main()

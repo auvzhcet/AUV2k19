@@ -1,5 +1,6 @@
 import curses
 from motion import movement
+from motion import line_follower as lf
 import time
 from vision import VideoRecord as vr
 
@@ -58,6 +59,9 @@ def motion(key):
         thrust -= 10
         if thrust <= 0:
             thrust = 0
+
+    elif key == 'v':
+        lf.run()
 
     else:
         print('None')
