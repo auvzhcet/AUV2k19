@@ -92,7 +92,7 @@ class Movement:
             x_rot, y_rot = IMU.get_rotations()
             max_thrust = 400
             thrust_per_degree = max_thrust/90
-            rot_thrust = x_rot*thrust_per_degree
+            rot_thrust = -x_rot*thrust_per_degree
             print('x_rot = ', x_rot)
         
         except Exception as e:
