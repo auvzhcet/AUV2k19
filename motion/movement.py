@@ -77,6 +77,16 @@ class Movement:
         for pin in self.THRUSTER_PINS:
             self.pi.set_servo_pulsewidth(pin, 1500)
 
+    def custom_thrusts(self, thrusts):
+        ''' 
+        Args:
+        thrusts -- A dictionary of pins and their respective thrusts 
+        '''
+
+        print('Custom Thrusts')
+        for pin, thrust in thrusts.items():
+            self.pi.set_servo_pulsewidth(pin, thrust)
+
     def _get_rot_thrust(self):
         try:
             x_rot, y_rot = IMU.get_rotations()
