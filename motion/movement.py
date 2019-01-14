@@ -2,9 +2,15 @@ import time
 
 try:
     from sensors import IMU
+except Exception as e:
+    print(e.__doc__)
+    print("Error in importing IMU")
+
+try:
     from sensors.NodeRead import NodeRead
 except Exception as e:
     print(e.__doc__)
+    print("Error in importing NodeRead")
 
 import pigpio
 
