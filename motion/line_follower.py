@@ -53,8 +53,8 @@ def correct_error(cx, cy, image):
 
     print('rot_thrust = ', rot_thrust)
     thrusts = {
-        m.pin_l: linear_thrust - rot_thrust,
-        m.pin_r: linear_thrust + rot_thrust
+        m.pin_l: linear_thrust + rot_thrust,
+        m.pin_r: linear_thrust - rot_thrust
     }
     m.custom_thrusts(thrusts)
 

@@ -27,8 +27,8 @@ class Movement:
 
         self.pin_f = 11
         self.pin_b = 12
-        self.pin_r = 23
-        self.pin_l = 15
+        self.pin_r = 15
+        self.pin_l = 23
 
         self.THRUSTER_PINS = [self.pin_f, self.pin_b, self.pin_r, self.pin_l]
 
@@ -96,9 +96,9 @@ class Movement:
     def _get_rot_thrust(self):
         try:
             x_rot, y_rot = IMU.get_rotations()
-            max_thrust = 400
+            max_thrust = 500
             thrust_per_degree = max_thrust/90
-            rot_thrust = -x_rot*thrust_per_degree
+            rot_thrust = x_rot*thrust_per_degree
             print('x_rot = ', x_rot)
         
         except Exception as e:

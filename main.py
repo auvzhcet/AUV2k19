@@ -4,7 +4,7 @@ from motion import line_follower as lf
 import time
 
 m = movement.Movement()
-thrust = 100
+thrust = 200
 
 def motion(key):
     global thrust
