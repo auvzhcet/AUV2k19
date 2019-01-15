@@ -4,6 +4,9 @@ import numpy
 from motion import movement
 
 cap = cv2.VideoCapture(0)
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
+out_image = cv2.VideoWriter('recording.avi', fourcc, 20.0, (640,480))
+
 m = movement.Movement()
 
 def mask_image(image):
@@ -65,6 +68,9 @@ def run():
     cx, cy = centroid_from_mask(image, mask)
     correct_error(cx, cy, image)
 
+    # Record the video for debugging purposes
+    out_image.write(image)
+
     # cv2.imshow("window", image)
     # key = cv2.waitKey(20)
     # if key & 0xFF == ord('q'):
@@ -75,14 +81,15 @@ def main():
     while True:
         rec, image = cap.read()
         # image = cv2.imread("plank_video_new.jpeg")
+
         mask = mask_image(image)
         cx, cy = centroid_from_mask(image, mask)
         correct_error(cx, cy, image)
 
-        # cv2.imshow("window", image)
-        # key = cv2.waitKey(20)
-        # if key & 0xFF == ord('q'):
-        #     break
+        cv2.imshow("window", image)
+        key = cv2.waitKey(20)
+        if key & 0xFF == ord('q'):
+            break
 
 if __name__ == '__main__':
     main()
