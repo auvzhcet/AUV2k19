@@ -4,7 +4,7 @@ import numpy
 from motion import movement
 import time
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 out_image = cv2.VideoWriter('recording.avi', fourcc, 20.0, (640, 480))
 
