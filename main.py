@@ -30,6 +30,7 @@ def motion(key):
     elif key == 'q':
         print("Quit")
         m.hold()
+        lf.tearDown()
         time.sleep(1)
         exit()
 

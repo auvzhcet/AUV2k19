@@ -23,17 +23,17 @@ def main():
 
     while True:
         _, frame = cap.read()
-        cv2.imshow("frame", frame)
+        # cv2.imshow("frame", frame)
         out.write(frame)
 
-        key = cv2.waitKey(20)
-        if key & 0xFF == ord('q'):
-            break
+        # key = cv2.waitKey(20)
+        # if key & 0xFF == ord('q'):
+        #   break
 
 
     cap.release()
     out.release()
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
 
 if __name__ == '__main__':
     main()

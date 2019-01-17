@@ -77,6 +77,13 @@ def run():
     #     break
 
 
+def tearDown():
+    global cap, out_image
+    cap.release()
+    out_image.release()
+    cv2.destroyAllWindows()
+
+
 def main():
     while True:
         rec, image = cap.read()
