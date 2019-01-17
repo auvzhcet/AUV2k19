@@ -8,8 +8,9 @@ def main():
         try:
             lf.run()
         except KeyboardInterrupt:
-            print('Oh No!')
+            lf.tearDown()
             m.hold()
+            print('Oh No!')
             break
 
 if __name__ == "__main__":
