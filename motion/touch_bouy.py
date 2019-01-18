@@ -35,19 +35,28 @@ def correct_error(cx, cy, image):
 
 def run():
     cam = camera.Camera()
-    lower = np.array([115, 0, 0])
-    upper = np.array([135, 255, 255])
 
-    while True:
+    i = 0
+    lower = [
+        np.array([115, 0, 0]),  # Red
+        np.array([87, 0, 0]),   # Yellow
+        np.array([50, 0, 0])]   # Green
+    upper = [
+        np.array([135, 255, 255]),
+        np.array([92, 255, 255]),
+        np.array([77, 255, 255])]
+
+    while i < 3:
         try:
             m.hp_control(33)
             image = cam.read()
-            cam.mask_image(lower, upper)
+            cam.mask_image(lower[i], upper[i])
             centroid = cam.centroid_if_object_present()
             if centroid:
                 (cx, cy) = centroid
                 correct_error(cx, cy, image)
                 if cam.should_touch_manoeuver():
+                    i = i + 1
                     m.forward(100)
                     print("Going Forward")
                     time.sleep(3)
@@ -57,9 +66,9 @@ def run():
             else:
                 print("Go left!")
                 m.left(100)
-                if cam.centroid_if_object_present():
-                    break
 
         except KeyboardInterrupt:
-            cam.tearDown()
-            # m.hold()
+            break
+
+        cam.tearDown()
+        m.hold()
