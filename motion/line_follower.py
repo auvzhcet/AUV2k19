@@ -15,7 +15,23 @@ def mask_image(image):
     upper = numpy.array([150, 255, 255])
     mask = cv2.inRange(hsv, lower, upper)
     cv2.flip(mask, 1)
+    _, mask = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
     return mask
+
+def max_contour_center(image, mask):
+    im2, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    c = max(contours, key = cv2.contourArea)
+    
+    # Add contour area check
+
+    x,y,w,h = cv2.boundingRect(c)
+
+    cv2.rectangle(image, (x,y), (x+w, y+h), (0, 255, 0), 2)
+
+    cx, cy = (x + w/2), (y + h/2)
+
+    return cx, cy, image
 
 
 def draw_centroid(overlay, cx, cy):
@@ -65,7 +81,8 @@ def run():
     rec, image = cap.read()
     # image = cv2.imread("plank_video_new.jpeg")
     mask = mask_image(image)
-    cx, cy = centroid_from_mask(image, mask)
+    # cx, cy = centroid_from_mask(image, mask)
+    
     correct_error(cx, cy, image)
 
     # Record the video for debugging purposes
