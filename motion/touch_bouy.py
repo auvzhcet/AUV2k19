@@ -40,6 +40,7 @@ def run():
 
     while True:
         try:
+            m.hp_control(33)
             image = cam.read()
             cam.mask_image(lower, upper)
             centroid = cam.centroid_if_object_present()

@@ -84,9 +84,9 @@ class Movement:
             self.pi.set_servo_pulsewidth(pin, 1500)
 
     def custom_thrusts(self, thrusts):
-        ''' 
+        '''
         Args:
-        thrusts -- A dictionary of pins and their respective thrusts 
+        thrusts -- A dictionary of pins and their respective thrusts
         '''
 
         print('Custom Thrusts')
@@ -100,7 +100,7 @@ class Movement:
             thrust_per_degree = max_thrust/90
             rot_thrust = x_rot*thrust_per_degree
             print('x_rot = ', x_rot)
-        
+
         except Exception as e:
             print(e.__doc__)
             print('IMU Error')
@@ -108,10 +108,9 @@ class Movement:
 
         return rot_thrust
 
-
     def pitch_control(self):
         print('P-controlled pitch')
-        
+
         rot_thrust = self._get_rot_thrust()
 
         if rot_thrust >= 200:
@@ -141,9 +140,7 @@ class Movement:
             under_thrust = 65
 
         return under_thrust
-
         
-
     def hp_control(self, desired_depth):
         print('HP Control')
         under_thrust = self._get_under_thrust(desired_depth)
@@ -153,20 +150,18 @@ class Movement:
         if under_thrust <= -200:
             under_thrust = -200
         print('under_thrust = ', under_thrust)
-        
+
         rot_thrust = self._get_rot_thrust()
         if rot_thrust >= 100:
             rot_thrust = 100
         if rot_thrust <= -100:
             rot_thrust = -100
         print('rot_thrust  = ', rot_thrust)
-        
+
         forward_thrust = int(1500 - under_thrust - rot_thrust)
         backward_thrust = int(1500 - under_thrust + rot_thrust)
-        
+
         print(forward_thrust, backward_thrust)
 
         self.pi.set_servo_pulsewidth(self.pin_f, forward_thrust)
         self.pi.set_servo_pulsewidth(self.pin_b, backward_thrust)
-
-
