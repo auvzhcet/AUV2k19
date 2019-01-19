@@ -4,7 +4,7 @@ import numpy
 from motion import movement
 import time
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 out_image = cv2.VideoWriter('recording.avi', fourcc, 20.0, (640, 480))
 
@@ -25,11 +25,15 @@ def centroid_if_object_present(image, mask):
     im2, contours, hierarchy = cv2.findContours(
         mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-    contour = max(contours, key=cv2.contourArea)
-    contour_area = cv2.contourArea(contour)
+    try:
+        contour = max(contours, key=cv2.contourArea)
+        contour_area = cv2.contourArea(contour)
+    except:
+        contour_area = 0
+    
     print("Contour Area = ", contour_area)
 
-    if contour_area > 20000:
+    if contour_area > 10000:
         print("OBJECT PRESENT")
         x, y, w, h = cv2.boundingRect(contour)
 
@@ -95,7 +99,7 @@ def run():
     out_image.write(image)
     if not touch:
         if centroid:
-            if contour_area > 250000:
+            if contour_area > 200000:
                 touch = True
                 s_time = time.time()
             else:

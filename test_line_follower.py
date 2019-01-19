@@ -17,7 +17,7 @@ def main():
         except Exception as e:
             lf.tearDown()
             m.hold()
-            print(e.__doc__)
+            print(e)
             break
 
 if __name__ == "__main__":
