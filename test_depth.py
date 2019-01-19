@@ -5,7 +5,7 @@ m = movement.Movement()
 def main():
     while True:
         try:
-            m.hp_control()
+            m.hp_control(33)
         except KeyboardInterrupt:
             print('Oh No!')
             m.hold()

@@ -144,9 +144,9 @@ class Movement:
 
         
 
-    def hp_control(self):
+    def hp_control(self, desired_depth):
         print('HP Control')
-        under_thrust = self._get_under_thrust(desired_depth = 33)
+        under_thrust = self._get_under_thrust(desired_depth)
 
         if under_thrust >= 200:
             under_thrust = 200

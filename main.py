@@ -47,7 +47,7 @@ def motion(key):
         m.pitch_control()
 
     elif key == 'l':
-        m.hp_control()
+        m.hp_control(33)
 
     elif key == '+':
         thrust += 10
