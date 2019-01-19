@@ -2,6 +2,7 @@
 import cv2
 import numpy
 from motion import movement
+import time
 
 cap = cv2.VideoCapture(0)
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
@@ -37,9 +38,9 @@ def centroid_if_object_present(image, mask):
 
         cx, cy = (x + w/2), (y + h/2)
         draw_centroid(image, cx, cy)
-        return cx, cy
+        return ((cx, cy), contour_area)
 
-    return False
+    return False, False
 
 
 def draw_centroid(overlay, cx, cy):
@@ -81,18 +82,39 @@ def tearDown():
     out_image.release()
     cv2.destroyAllWindows()
 
+touch = False
+s_time = None
+
 def run():
+    global touch, s_time
+    
+
     rec, image = cap.read()
     mask = mask_image(image)
-    centroid = centroid_if_object_present(image, mask)
+    centroid, contour_area = centroid_if_object_present(image, mask)
     out_image.write(image)
+    if not touch:
+        if centroid:
+            if contour_area > 250000:
+                touch = True
+                s_time = time.time()
+            else:
+                (cx, cy) = centroid
+                correct_error(cx, cy, image)
+        else:
+            print("Go left!")
+            m.left(100)
 
-    if centroid:
-        (cx, cy) = centroid
-        correct_error(cx, cy, image)
     else:
-        print("Go left!")
-        m.left(100)
+        print('!!!!!! touch  !!!!!!!!!!!!')
+        if (time.time() - s_time <= 2):
+            m.forward(100)
+        elif (2 < time.time() - s_time <= 4):
+            m.backward(100)
+        else:
+            m.hold()
+            touch = False
+
 
 def main():
     while True:
