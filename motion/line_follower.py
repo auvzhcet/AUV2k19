@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 import cv2
 import numpy
-from motion import movement
+# from motion import movement
 
 cap = cv2.VideoCapture(0)
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 out_image = cv2.VideoWriter('recording.avi', fourcc, 20.0, (640, 480))
 
-m = movement.Movement()
+# m = movement.Movement()
 
 
 def mask_image(image):
@@ -81,6 +81,18 @@ def tearDown():
     out_image.release()
     cv2.destroyAllWindows()
 
+def run():
+    rec, image = cap.read()
+        # image = cv2.imread("plank_video_new.jpeg")
+
+    mask = mask_image(image)
+    centroid = centroid_if_object_present(image, mask)
+    if centroid:
+        (cx, cy) = centroid
+        # correct_error(cx, cy, image)
+    else:
+        print("Go left!")
+        # m.left(100)
 
 def main():
     while True:
@@ -94,9 +106,7 @@ def main():
             # correct_error(cx, cy, image)
         else:
             print("Go left!")
-            m.left(100)
-            if centroid_if_object_present(image, mask):
-                break
+            # m.left(100)
 
         cv2.imshow("window", image)
         cv2.imshow("mask", mask)

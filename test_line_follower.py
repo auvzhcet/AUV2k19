@@ -1,7 +1,8 @@
 from motion import line_follower as lf
-from motion import movement
+import cv2
+# from motion import movement
 
-m = movement.Movement()
+# m = movement.Movement()
 
 def main():
     while True:
@@ -9,8 +10,13 @@ def main():
             lf.run()
         except KeyboardInterrupt:
             lf.tearDown()
-            m.hold()
-            print('Oh No!')
+            # m.hold()
+            print('Manual Stop')
+            break
+        except Exception as e:
+            lf.tearDown()
+            # m.hold()
+            print(e.__doc__)
             break
 
 if __name__ == "__main__":
