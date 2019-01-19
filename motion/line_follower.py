@@ -83,10 +83,10 @@ def tearDown():
 
 def run():
     rec, image = cap.read()
-        # image = cv2.imread("plank_video_new.jpeg")
-
     mask = mask_image(image)
     centroid = centroid_if_object_present(image, mask)
+    out_image.write(image)
+
     if centroid:
         (cx, cy) = centroid
         correct_error(cx, cy, image)
@@ -100,6 +100,8 @@ def main():
 
         mask = mask_image(image)
         centroid = centroid_if_object_present(image, mask)
+        out_image.write(image)
+
         if centroid:
             (cx, cy) = centroid
             correct_error(cx, cy, image)
