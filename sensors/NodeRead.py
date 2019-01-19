@@ -5,8 +5,16 @@ import os
 class NodeRead:
 
     def __init__(self):
+
         self.baud_rate = 9600
-        self.node_port = '/dev/ttyUSB0'
+        lists = os.listdir('/dev/')
+        for i in lists:
+            if 'ttyUSB' in i:
+                port = i
+                break
+                                           
+        self.node_port = '/dev/' + port
+        print(self.node_port)
         self.node_serial = None
 
     def make_connection(self):

@@ -138,7 +138,7 @@ class Movement:
         except Exception as e:
             print(e.__doc__)
             print("Pressure sensing error")
-            under_thrust = 50
+            under_thrust = 65
 
         return under_thrust
 

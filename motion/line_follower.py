@@ -10,11 +10,12 @@ out_image = cv2.VideoWriter('recording.avi', fourcc, 20.0, (640, 480))
 
 m = movement.Movement()
 
-
+# RED: 115-135
+# Yellow: 90-109
 def mask_image(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-    lower = numpy.array([115, 0, 0])
-    upper = numpy.array([135, 255, 255])
+    lower = numpy.array([90, 0, 0])
+    upper = numpy.array([109, 255, 255])
     mask = cv2.inRange(hsv, lower, upper)
     cv2.flip(mask, 1)
     _, mask = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
@@ -33,7 +34,7 @@ def centroid_if_object_present(image, mask):
     
     print("Contour Area = ", contour_area)
 
-    if contour_area > 10000:
+    if contour_area > 500:
         print("OBJECT PRESENT")
         x, y, w, h = cv2.boundingRect(contour)
 
@@ -59,7 +60,7 @@ def correct_error(cx, cy, image):
     #      where there shall be no lateral movement
 
     # TODO: Propel linearly
-    linear_thrust = 1600
+    linear_thrust = 1650
     slope = 5/16
     rot_thrust = err*slope
 
@@ -99,7 +100,7 @@ def run():
     out_image.write(image)
     if not touch:
         if centroid:
-            if contour_area > 200000:
+            if contour_area > 100000:
                 touch = True
                 s_time = time.time()
             else:
@@ -113,7 +114,9 @@ def run():
         print('!!!!!! touch  !!!!!!!!!!!!')
         if (time.time() - s_time <= 2):
             m.forward(100)
-        elif (2 < time.time() - s_time <= 4):
+        elif (2 < time.time() - s_time <= 3):
+            m.hold()
+        elif (3 < time.time() - s_time <= 7):
             m.backward(100)
         else:
             m.hold()
