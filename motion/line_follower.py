@@ -12,10 +12,17 @@ m = movement.Movement()
 
 # RED: 115-135
 # Yellow: 90-109
+# Geen: 44-78
+color_no = 0
 def mask_image(image):
+    global color_no
     hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-    lower = numpy.array([90, 0, 0])
-    upper = numpy.array([109, 255, 255])
+    lower_array = [numpy.array([115, 0, 0]), numpy.array([90, 0, 0]), numpy.array([44, 0, 0])]
+    upper_array = [numpy.array([135, 0, 0]), numpy.array([109, 0, 0]), numpy.array([78, 0, 0])]
+    
+    lower = lower_array[color_no]
+    upper = upper_array[color_no]
+
     mask = cv2.inRange(hsv, lower, upper)
     cv2.flip(mask, 1)
     _, mask = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
@@ -91,7 +98,7 @@ touch = False
 s_time = None
 
 def run():
-    global touch, s_time
+    global touch, s_time, color_no
     
 
     rec, image = cap.read()
@@ -103,6 +110,7 @@ def run():
             if contour_area > 100000:
                 touch = True
                 s_time = time.time()
+                color_no += 1
             else:
                 (cx, cy) = centroid
                 correct_error(cx, cy, image)
@@ -117,7 +125,7 @@ def run():
         elif (2 < time.time() - s_time <= 3):
             m.hold()
         elif (3 < time.time() - s_time <= 7):
-            m.backward(100)
+            m.backward(150)
         else:
             m.hold()
             touch = False
