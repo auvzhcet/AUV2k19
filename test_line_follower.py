@@ -5,6 +5,7 @@ m = movement.Movement()
 
 def main():
     while True:
+        print('\n<--------------------->')
         m.hp_control(33)
         try:
             lf.run()
