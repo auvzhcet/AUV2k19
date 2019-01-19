@@ -1,21 +1,21 @@
 from motion import line_follower as lf
-import cv2
-# from motion import movement
-
-# m = movement.Movement()
+from motion import movement
+import os
+m = movement.Movement()
 
 def main():
     while True:
+        m.hp_control()
         try:
             lf.run()
         except KeyboardInterrupt:
             lf.tearDown()
-            # m.hold()
+            m.hold()
             print('Manual Stop')
             break
         except Exception as e:
             lf.tearDown()
-            # m.hold()
+            m.hold()
             print(e.__doc__)
             break
 
