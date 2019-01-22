@@ -13,12 +13,10 @@ m = movement.Movement()
 # RED: 115-135
 # Yellow: 90-109
 # Geen: 44-78
-color_no = 0
-def mask_image(image):
-    global color_no
+def mask_image(image, color_no):
     hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-    lower_array = [numpy.array([115, 0, 0]), numpy.array([90, 0, 0]), numpy.array([44, 0, 0])]
-    upper_array = [numpy.array([135, 0, 0]), numpy.array([109, 0, 0]), numpy.array([78, 0, 0])]
+    lower_array = [numpy.array([90, 0, 0]), numpy.array([115, 0, 0]), numpy.array([44, 0, 0])]
+    upper_array = [numpy.array([109, 255, 255]), numpy.array([135, 255, 255]), numpy.array([78, 255, 255])]
     
     lower = lower_array[color_no]
     upper = upper_array[color_no]
@@ -97,20 +95,21 @@ def tearDown():
 touch = False
 s_time = None
 
+color_no = 0
 def run():
     global touch, s_time, color_no
     
 
     rec, image = cap.read()
-    mask = mask_image(image)
+    mask = mask_image(image, color_no)
     centroid, contour_area = centroid_if_object_present(image, mask)
     out_image.write(image)
     if not touch:
         if centroid:
-            if contour_area > 100000:
+            if contour_area > 90000:
                 touch = True
                 s_time = time.time()
-                color_no += 1
+                color_no = color_no + 1
             else:
                 (cx, cy) = centroid
                 correct_error(cx, cy, image)
@@ -120,11 +119,11 @@ def run():
 
     else:
         print('!!!!!! touch  !!!!!!!!!!!!')
-        if (time.time() - s_time <= 2):
+        if (time.time() - s_time <= 1):
             m.forward(100)
-        elif (2 < time.time() - s_time <= 3):
+        elif (1 < time.time() - s_time <= 2):
             m.hold()
-        elif (3 < time.time() - s_time <= 7):
+        elif (2 < time.time() - s_time <= 7):
             m.backward(150)
         else:
             m.hold()
