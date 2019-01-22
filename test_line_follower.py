@@ -6,7 +6,7 @@ m = movement.Movement()
 def main():
     while True:
         print('\n<--------------------->')
-        # m.hp_control(40)
+        m.hp_control(40)
         try:
             lf.run()
         except KeyboardInterrupt:

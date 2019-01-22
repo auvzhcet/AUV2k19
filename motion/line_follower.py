@@ -12,11 +12,11 @@ m = movement.Movement()
 
 # RED: 115-135
 # Yellow: 90-109
-# Geen: 44-78
+# Geen: 29-61
 def mask_image(image, color_no):
     hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-    lower_array = [numpy.array([90, 0, 0]), numpy.array([115, 0, 0]), numpy.array([44, 0, 0])]
-    upper_array = [numpy.array([109, 255, 255]), numpy.array([135, 255, 255]), numpy.array([78, 255, 255])]
+    lower_array = [numpy.array([115, 0, 0]), numpy.array([90, 0, 0]), numpy.array([29, 0, 0])]
+    upper_array = [numpy.array([135, 255, 255]), numpy.array([109, 255, 255]), numpy.array([61, 255, 255])]
     
     lower = lower_array[color_no]
     upper = upper_array[color_no]
