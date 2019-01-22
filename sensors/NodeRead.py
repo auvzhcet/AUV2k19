@@ -42,6 +42,7 @@ class NodeRead:
                         #print(data)
                     except:
                         print("Read Error")
+                    self.node_serial.close()
                     if int(data) == 1024:
                         raise ValueError("1024 speaks DANGER!")
                     return data
