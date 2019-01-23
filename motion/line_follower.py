@@ -76,9 +76,23 @@ def correct_error(cx, cy, image):
         print('Right')
 
     print('rot_thrust = ', rot_thrust)
+
+    err_y = cy - h/2
+    constant_thrust = 1450
+    y_slope = 5/16
+    under_thrust = err_y*slope
+    under_thrust = max(-100, min(under_thrust, 100))
+
+    if under_thrust < 0:
+        print("Upwards")
+    else:
+        print("Downwards")
+
     thrusts = {
         m.pin_l: linear_thrust + rot_thrust,
         m.pin_r: linear_thrust - rot_thrust
+        m.pin_f: constant_thrust - under_thrust,
+        m.pin_b: constant_thrust - under_thrust
     }
     m.custom_thrusts(thrusts)
 
@@ -144,6 +158,7 @@ def main():
         else:
             print("Go left!")
             m.left(100)
+            m.pitch_control()
 
         cv2.imshow("window", image)
         cv2.imshow("mask", mask)
