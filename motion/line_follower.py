@@ -6,7 +6,7 @@ import time
 
 cap = cv2.VideoCapture(0)
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out_image = cv2.VideoWriter('recording.avi', fourcc, 20.0, (640, 480))
+out_image = cv2.VideoWriter('recording-%s.avi' % time.time(), fourcc, 20.0, (640, 480))
 
 m = movement.Movement()
 
@@ -15,8 +15,9 @@ m = movement.Movement()
 # Geen: 29-61
 def mask_image(image, color_no):
     hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-    lower_array = [numpy.array([115, 0, 0]), numpy.array([90, 0, 0]), numpy.array([101, 0, 0])]
-    upper_array = [numpy.array([135, 255, 255]), numpy.array([109, 255, 255]), numpy.array([115, 255, 255])]
+    # NOTE: Orange Gate not very clearly visible
+    lower_array = [numpy.array([115, 0, 0]), numpy.array([21, 0, 0]), numpy.array([40, 0, 0])]
+    upper_array = [numpy.array([135, 255, 255]), numpy.array([95, 255, 255]), numpy.array([47, 255, 255])]
     
     lower = lower_array[color_no]
     upper = upper_array[color_no]
@@ -77,22 +78,14 @@ def correct_error(cx, cy, image):
 
     print('rot_thrust = ', rot_thrust)
 
-    # err_y = cy - h/2
-    # constant_thrust = 1450
-    # y_slope = 5/16
-    # under_thrust = err_y*slope
-    # under_thrust = max(-100, min(under_thrust, 100))
-
-    # if under_thrust < 0:
-    #     print("Upwards")
-    # else:
-    #     print("Downwards")
+    err_y = cy - h/2
+    constant = 90
+    y_slope = 1/30.
+    m.hp_control(err_y*y_slope + constant)
 
     thrusts = {
         m.pin_l: linear_thrust + rot_thrust,
         m.pin_r: linear_thrust - rot_thrust,
-        # m.pin_f: constant_thrust - under_thrust,
-        # m.pin_b: constant_thrust - under_thrust
     }
     m.custom_thrusts(thrusts)
 
@@ -112,7 +105,7 @@ s_time = None
 color_no = 0
 def run():
     global touch, s_time, color_no
-    
+
 
     rec, image = cap.read()
     mask = mask_image(image, color_no)
@@ -152,20 +145,21 @@ def main():
     while True:
         rec, image = cap.read()
 
-        mask = mask_image(image)
+        # See on Yellow
+        mask = mask_image(image, 1)
         centroid = centroid_if_object_present(image, mask)
         out_image.write(image)
 
         if centroid:
             (cx, cy) = centroid
-            correct_error(cx, cy, image)
+            # correct_error(cx, cy, image)
         else:
-            print("Go Right!")
-            m.right(100)
-            m.pitch_control()
+            print("Searching! Go Right!")
+            # m.right(100)
+            # m.pitch_control()
 
-        cv2.imshow("window", image)
-        cv2.imshow("mask", mask)
+        cv2.imshow("Image", cv2.resize(image, (640, 480)))
+        cv2.imshow("Mask", cv2.resize(mask, (640, 480)))
         key = cv2.waitKey(20)
         if key & 0xFF == ord('q'):
             tearDown()
