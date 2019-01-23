@@ -9,7 +9,7 @@ def main():
     tick = time.time()
     while True:
         try:
-            if time.time() - tick > 5:
+            if time.time() - tick > 4:
                 m.hold()
                 time.sleep(2)
                 break
@@ -23,6 +23,7 @@ def main():
     while True:
         print('\n<--------------------->')
         try:
+            m.hp_control(40)
             lf.run()
         except KeyboardInterrupt:
             lf.tearDown()
