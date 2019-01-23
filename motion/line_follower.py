@@ -90,7 +90,7 @@ def correct_error(cx, cy, image):
 
     thrusts = {
         m.pin_l: linear_thrust + rot_thrust,
-        m.pin_r: linear_thrust - rot_thrust
+        m.pin_r: linear_thrust - rot_thrust,
         m.pin_f: constant_thrust - under_thrust,
         m.pin_b: constant_thrust - under_thrust
     }
