@@ -15,8 +15,8 @@ m = movement.Movement()
 # Geen: 29-61
 def mask_image(image, color_no):
     hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-    lower_array = [numpy.array([115, 0, 0]), numpy.array([90, 0, 0]), numpy.array([29, 0, 0])]
-    upper_array = [numpy.array([135, 255, 255]), numpy.array([109, 255, 255]), numpy.array([61, 255, 255])]
+    lower_array = [numpy.array([115, 0, 0]), numpy.array([90, 0, 0]), numpy.array([101, 0, 0])]
+    upper_array = [numpy.array([135, 255, 255]), numpy.array([109, 255, 255]), numpy.array([115, 255, 255])]
     
     lower = lower_array[color_no]
     upper = upper_array[color_no]
@@ -128,8 +128,12 @@ def run():
                 (cx, cy) = centroid
                 correct_error(cx, cy, image)
         else:
-            print("Go left!")
-            m.left(100)
+            if color_no > 1:
+                print("Go Left!")
+                m.left(100)
+            else:
+                print("Go Right!")
+                m.right(100)
 
     else:
         print('!!!!!! touch  !!!!!!!!!!!!')
@@ -137,7 +141,7 @@ def run():
             m.forward(100)
         elif (1 < time.time() - s_time <= 2):
             m.hold()
-        elif (2 < time.time() - s_time <= 7):
+        elif (2 < time.time() - s_time <= 6):
             m.backward(150)
         else:
             m.hold()
