@@ -65,7 +65,7 @@ def correct_error(cx, cy, image):
     #      where there shall be no lateral movement
 
     # TODO: Propel linearly
-    linear_thrust = 1650
+    linear_thrust = 1600
     slope = 5/16
     rot_thrust = err*slope
 

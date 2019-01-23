@@ -9,13 +9,13 @@ def main():
     tick = time.time()
     while True:
         try:
-            if time.time() - tick > 4:
+            if time.time() - tick > 13:
                 m.hold()
                 time.sleep(2)
                 break
             else:
-                m.hp_control(40)
-                m.forward(100)
+                m.hp_control(75)
+                m.forward(150)
         except Exception as e:
             print(e)
             m.hold()
@@ -23,7 +23,7 @@ def main():
     while True:
         print('\n<--------------------->')
         try:
-            m.hp_control(40)
+            m.hp_control(75)
             lf.run()
         except KeyboardInterrupt:
             lf.tearDown()
