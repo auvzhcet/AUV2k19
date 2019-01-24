@@ -1,20 +1,20 @@
 from motion import line_follower as lf
 from motion import movement
 import time
-import os
 
 m = movement.Movement()
+
 
 def main():
     tick = time.time()
     while True:
         try:
-            if time.time() - tick > 13:
+            if time.time() - tick > 12:
                 m.hold()
                 time.sleep(2)
                 break
             else:
-                m.hp_control(75)
+                m.hp_control(90)
                 m.forward(150)
         except Exception as e:
             print(e)
@@ -23,7 +23,6 @@ def main():
     while True:
         print('\n<--------------------->')
         try:
-            m.hp_control(75)
             lf.run()
         except KeyboardInterrupt:
             lf.tearDown()
@@ -35,6 +34,7 @@ def main():
             m.hold()
             print(e)
             break
+
 
 if __name__ == "__main__":
     main()
