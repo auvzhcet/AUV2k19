@@ -1,13 +1,15 @@
 # AUV2k19
 ---
 > Software stack for the vehicle that participated in SAVe 2019
-> 
+>
+*Note: Major portion of this code was hastily written a month before the competition. Hence, brace yourself for bad coding practices!*
 
-#### Repository Structure 
+### Repository Structure 
 - `motion`: Includes all codes related to motion
   - `movement.py`: the main motion module that includes all basic movements. It is intended to be used as a library for all major tasks.
   - `line_follower.py`:  the code we used in the competition. The name is misleading. Its actually bouy detection and following, which was the fist task of the competition. 
   - `camera.py`: camera utility functions and vision-based bouy detection algorithms. This module should ideally be inside the `vision` folder.
+  - `thrust.py`, `thrust_new.py` and `thrust_bouy.py` are just test scripts and can be safely ignored.
 - `sensors`: sensor related modules
   - `IMU.py`: A utility script to read IMU data. The code here is copied and not written by us.
     - This might help if you want to interface IMU with Pi. [Accelerometer, Gyroscope, and Magnetometer Analysis with Raspberry Pi Part I: Basic Readings — Maker Portal](https://makersportal.com/blog/2019/11/11/raspberry-pi-python-accelerometer-gyroscope-magnetometer)
@@ -33,6 +35,16 @@
     - `test_depth.py`: test the code that maintains depth and pitch simultaneously.
     - `test_pitch.py`: check the code that maintains pitch
 
-#### Hydrophones
+### Hydrophones
 - Read `hydrophones_study.md`
 - Most of the work in this area is done by [Jawad Akhtar](https://github.com/syedjawadakhtar)
+
+
+### Tech Stack
+- OpenCV
+- Numpy
+- Python
+- Raspberry Pi 3B+
+- Node MCU
+- Pressure Sensor
+- IMU MPU6050
